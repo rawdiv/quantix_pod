@@ -354,7 +354,6 @@
         // DOM Elements
         const podcastText = document.getElementById('podcast-text');
         const apiKeyInput = document.getElementById('api-key');
-        const voiceCards = document.querySelectorAll('.voice-card');
         const speedInput = document.getElementById('speed');
         const pitchInput = document.getElementById('pitch');
         const generateButton = document.getElementById('generate-button');
@@ -382,12 +381,14 @@
         });
 
         // Voice Selection
-        let selectedVoice = 'rachel';
+        let selectedVoice = 'rachel'; // Default voice
+        const voiceCards = document.querySelectorAll('.voice-card');
         voiceCards.forEach(card => {
             card.addEventListener('click', () => {
                 voiceCards.forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
                 selectedVoice = card.dataset.voice;
+                console.log('Selected voice:', selectedVoice);
             });
         });
 
@@ -395,35 +396,60 @@
         generateButton.addEventListener('click', async () => {
             const text = podcastText.value.trim();
 
+            // Make sure we have text
             if (!text) {
                 alert('Please enter your podcast script');
                 return;
             }
 
+            // Use a shorter text for testing if needed
+            const useText = text.length > 1000 ? text.substring(0, 1000) + "..." : text;
+
             // Show loading state
             generateButton.disabled = true;
             loading.classList.add('active');
+            loading.innerText = "Generating your podcast... This may take 10-30 seconds.";
             resultSection.classList.remove('active');
 
             try {
+                console.log('Sending request to server...');
+                console.log('Text length:', useText.length);
+                console.log('Selected voice:', selectedVoice);
+
                 const response = await fetch('http://localhost:3000/api/generate-podcast', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        text: text,
+                        text: useText,
                         voice_id: selectedVoice
                     })
                 });
 
+                console.log('Response status:', response.status);
+                console.log('Response type:', response.headers.get('content-type'));
+
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to generate podcast');
+                    let errorText = 'Failed to generate podcast';
+                    try {
+                        const errorData = await response.json();
+                        console.error('Server Error:', errorData);
+                        errorText = errorData.error || errorText;
+                    } catch (e) {
+                        console.error('Could not parse error response', e);
+                    }
+                    throw new Error(errorText);
                 }
 
                 // Get audio data
                 const audioBlob = await response.blob();
+                console.log('Received audio blob size:', audioBlob.size);
+                
+                if (audioBlob.size === 0) {
+                    throw new Error('Received empty audio file. Please try again.');
+                }
+                
                 const audioUrl = URL.createObjectURL(audioBlob);
 
                 // Update audio player
@@ -434,12 +460,13 @@
                 // Show result
                 resultSection.classList.add('active');
             } catch (error) {
-                console.error('Error:', error);
-                alert(`Failed to generate podcast: ${error.message}`);
+                console.error('Error generating podcast:', error);
+                alert(`Failed to generate podcast: ${error.message}\n\nPlease try again with a shorter text or check the console for more details.`);
             } finally {
                 // Reset loading state
                 generateButton.disabled = false;
                 loading.classList.remove('active');
+                loading.innerText = "Generating your podcast... This may take a few moments.";
             }
         });
 

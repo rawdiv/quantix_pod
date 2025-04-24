@@ -5,6 +5,279 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quantix Pod - AI Podcast Generator</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Additional styles for enhanced index page */
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .animate-pulse {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .hero {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .background-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0.1;
+        }
+        
+        .background-element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3b82f6, #ec4899);
+            opacity: 0.3;
+        }
+        
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .author-info {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3b82f6, #ec4899);
+            margin-right: 1rem;
+            overflow: hidden;
+        }
+        
+        .pricing-section {
+            padding: 6rem 2rem;
+            background: linear-gradient(to bottom, #111, #000);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 3rem auto 0;
+        }
+        
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .pricing-card.featured {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            border-radius: 0 0 0 12px;
+        }
+        
+        .pricing-header {
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-tier {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .pricing-cost {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .pricing-period {
+            font-size: 1rem;
+            color: #aaa;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 2rem 0;
+            padding: 0;
+            flex-grow: 1;
+        }
+        
+        .pricing-features li {
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+            color: #aaa;
+        }
+        
+        .pricing-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+        }
+        
+        .news-section {
+            padding: 5rem 2rem;
+            background: #000;
+            text-align: center;
+        }
+        
+        .news-form {
+            max-width: 500px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .news-input {
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .news-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .footer {
+            padding: 4rem 2rem 2rem;
+            background: #111;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+        
+        .footer-col h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-col h3::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -0.5rem;
+            width: 50px;
+            height: 2px;
+            background: #3b82f6;
+        }
+        
+        .footer-col ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-col ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-col ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-col ul li a:hover {
+            color: #3b82f6;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: #3b82f6;
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -13,6 +286,7 @@
             <ul>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
                 <li><a href="#pricing">Pricing</a></li>
                 <li><a href="podcast.html" class="cta-button">Generate Podcast</a></li>
             </ul>
@@ -21,25 +295,39 @@
 
     <main>
         <section class="hero">
-            <h1>Transform Your Content into Professional Podcasts</h1>
+            <div class="background-elements">
+                <!-- Generated background elements -->
+            </div>
+            <h1 class="animate-float">Transform Your Content into Professional Podcasts</h1>
             <p>Create high-quality podcasts from your text in minutes using advanced AI technology.</p>
-            <a href="podcast.html" class="cta-button">Start Creating</a>
+            <a href="podcast.html" class="cta-button animate-pulse">Start Creating</a>
+            <div class="hero-image">
+                <img src="https://placehold.co/600x400/111/3b82f6/png?text=AI+Podcast" alt="AI Podcast Generator" class="animate-float" style="border-radius:12px; margin-top:3rem; max-width:100%; width:600px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5)">
+            </div>
         </section>
 
         <section id="features" class="features">
             <h2>Features</h2>
             <div class="feature-grid">
                 <div class="feature-card">
+                    <i class="fas fa-microphone-alt" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1rem;"></i>
                     <h3>Natural Voices</h3>
-                    <p>Choose from multiple AI voices that sound human-like and engaging.</p>
+                    <p>Choose from multiple AI voices that sound human-like and engaging to your audience.</p>
                 </div>
                 <div class="feature-card">
+                    <i class="fas fa-bolt" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1rem;"></i>
                     <h3>Easy to Use</h3>
-                    <p>Simple interface that lets you create podcasts in just a few clicks.</p>
+                    <p>Simple interface that lets you create podcasts in just a few clicks without technical knowledge.</p>
                 </div>
                 <div class="feature-card">
+                    <i class="fas fa-music" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1rem;"></i>
                     <h3>High Quality</h3>
-                    <p>Professional-grade audio output that's ready to publish.</p>
+                    <p>Professional-grade audio output that's ready to publish on any podcast platform.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-comments" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+                    <h3>Conversational Format</h3>
+                    <p>Create engaging dialogues between multiple speakers for dynamic, interesting content.</p>
                 </div>
             </div>
         </section>
@@ -48,25 +336,240 @@
             <h2>How It Works</h2>
             <div class="steps">
                 <div class="step">
-                    <h3>1. Write Your Script</h3>
-                    <p>Enter your podcast script or content in the text editor.</p>
+                    <div class="step-number">1</div>
+                    <h3>Write Your Script</h3>
+                    <p>Enter your podcast script or content in the text editor with speaker labels for conversations.</p>
                 </div>
                 <div class="step">
-                    <h3>2. Choose Your Voice</h3>
-                    <p>Select from our range of natural-sounding AI voices.</p>
+                    <div class="step-number">2</div>
+                    <h3>Choose Your Voice</h3>
+                    <p>Select from our range of natural-sounding AI voices for each speaker in your podcast.</p>
                 </div>
                 <div class="step">
-                    <h3>3. Generate & Download</h3>
-                    <p>Click generate and download your podcast in MP3 format.</p>
+                    <div class="step-number">3</div>
+                    <h3>Generate & Download</h3>
+                    <p>Click generate and download your podcast in MP3 format, ready to share with the world.</p>
                 </div>
             </div>
         </section>
+        
+        <section id="testimonials" class="testimonials">
+            <h2>What Our Users Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Quantix Pod has completely changed how I create content. I can produce professional sounding podcasts in minutes instead of hours spent in a recording studio."</p>
+                    <div class="author-info">
+                        <div class="author-avatar"></div>
+                        <div>
+                            <p class="author-name">Sarah Johnson</p>
+                            <p class="author-role">Content Creator</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"As a non-native English speaker, Quantix Pod helps me create professional audio content without worrying about my accent. The voices sound incredibly natural!"</p>
+                    <div class="author-info">
+                        <div class="author-avatar"></div>
+                        <div>
+                            <p class="author-name">Carlos Rodriguez</p>
+                            <p class="author-role">Digital Marketer</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">"I use Quantix Pod for creating educational content for my students. The conversational format between multiple speakers makes learning more engaging."</p>
+                    <div class="author-info">
+                        <div class="author-avatar"></div>
+                        <div>
+                            <p class="author-name">Dr. Emily Chen</p>
+                            <p class="author-role">University Professor</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="pricing" class="pricing-section">
+            <h2>Choose Your Plan</h2>
+            <p class="section-desc">Find a pricing plan that fits your needs</p>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <div class="pricing-tier">Free</div>
+                        <div class="pricing-cost">$0</div>
+                        <div class="pricing-period">forever</div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Generate up to 10 minutes of audio per month</li>
+                        <li>Access to 2 basic voices</li>
+                        <li>Standard audio quality</li>
+                        <li>Email support</li>
+                    </ul>
+                    <a href="podcast.html" class="cta-button">Get Started</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <div class="pricing-tier">Premium</div>
+                        <div class="pricing-cost">$19</div>
+                        <div class="pricing-period">per month</div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Generate up to 60 minutes of audio per month</li>
+                        <li>Access to all 8 premium voices</li>
+                        <li>High-definition audio quality</li>
+                        <li>Priority support</li>
+                        <li>Download in multiple formats</li>
+                        <li>Add background music</li>
+                    </ul>
+                    <a href="podcast.html" class="cta-button">Get Started</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <div class="pricing-tier">Pro</div>
+                        <div class="pricing-cost">$49</div>
+                        <div class="pricing-period">per month</div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Generate unlimited audio</li>
+                        <li>Access to all voices + exclusive pro voices</li>
+                        <li>Studio-quality audio</li>
+                        <li>Priority support with dedicated manager</li>
+                        <li>API access for integration</li>
+                        <li>Custom voice training available</li>
+                        <li>Advanced editing tools</li>
+                    </ul>
+                    <a href="podcast.html" class="cta-button">Get Started</a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="newsletter" class="news-section">
+            <h2>Stay Updated</h2>
+            <p>Subscribe to our newsletter for the latest features and updates</p>
+            
+            <form class="news-form">
+                <input type="email" placeholder="Your email address" class="news-input" required>
+                <button type="submit" class="cta-button">Subscribe</button>
+            </form>
+        </section>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Quantix Pod. All rights reserved.</p>
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>Quantix Pod</h3>
+                <p>Advanced AI podcast generation platform for creators, educators, and businesses.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Product</h3>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#">API</a></li>
+                    <li><a href="#">Integrations</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Community</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">GDPR</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Quantix Pod. All rights reserved.</p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Generate background elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgContainer = document.querySelector('.background-elements');
+            const numElements = 15;
+            
+            for (let i = 0; i < numElements; i++) {
+                const element = document.createElement('div');
+                element.classList.add('background-element');
+                
+                // Random size between 50px and 300px
+                const size = Math.random() * 250 + 50;
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                element.style.left = `${posX}%`;
+                element.style.top = `${posY}%`;
+                
+                // Random animation duration
+                const animDuration = Math.random() * 20 + 10;
+                element.style.animation = `float ${animDuration}s ease-in-out infinite`;
+                element.style.animationDelay = `${Math.random() * 5}s`;
+                
+                bgContainer.appendChild(element);
+            }
+        });
+    </script>
 </body>
 </html> 

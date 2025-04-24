@@ -77,6 +77,8 @@ main {
     background: linear-gradient(to right, #fff, #aaa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    position: relative;
+    z-index: 1;
 }
 
 .hero p {
@@ -84,6 +86,8 @@ main {
     color: #aaa;
     margin-bottom: 2rem;
     max-width: 600px;
+    position: relative;
+    z-index: 1;
 }
 
 /* Features Section */
@@ -92,10 +96,26 @@ main {
     background: #000;
 }
 
-.features h2 {
+.features h2, 
+.how-it-works h2,
+.testimonials h2,
+.pricing-section h2,
+.news-section h2 {
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 3rem;
+    background: linear-gradient(to right, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    width: 100%;
+}
+
+.section-desc {
+    text-align: center;
+    color: #aaa;
+    max-width: 600px;
+    margin: -1.5rem auto 2rem;
 }
 
 .feature-grid {
@@ -112,6 +132,7 @@ main {
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
+    text-align: center;
 }
 
 .feature-card:hover {
@@ -135,12 +156,6 @@ main {
     background: #111;
 }
 
-.how-it-works h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
-}
-
 .steps {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -152,6 +167,21 @@ main {
 .step {
     text-align: center;
     padding: 30px;
+    position: relative;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #3b82f6, #ec4899);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto 1.5rem;
+    color: white;
 }
 
 .step h3 {
@@ -162,6 +192,43 @@ main {
 
 .step p {
     color: #aaa;
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 100px 40px;
+    background: #000;
+}
+
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.stars {
+    color: #f59e0b;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.testimonial-text {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    color: #ddd;
+    line-height: 1.7;
+}
+
+.author-name {
+    font-weight: 600;
+    color: #fff;
+}
+
+.author-role {
+    color: #aaa;
+    font-size: 0.9rem;
 }
 
 /* CTA Button */
@@ -176,6 +243,9 @@ main {
     font-size: 1.2rem;
     font-weight: 500;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
 }
 
 .cta-button:hover {
@@ -211,11 +281,25 @@ footer {
         font-size: 1rem;
     }
 
-    .features, .how-it-works {
+    .features, .how-it-works, .testimonials, .pricing-section, .news-section {
         padding: 60px 20px;
     }
 
-    .feature-grid, .steps {
+    .feature-grid, .steps, .testimonial-grid, .pricing-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .footer-col h3::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .social-links {
+        justify-content: center;
     }
 } 

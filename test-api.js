@@ -1,7 +1,9 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
+require('dotenv').config();
 
-const API_KEY = 'sk_5d377dbe2e70849fb975f769109318b284cf1c9a3bcbc16e';
+// Use API key from environment variables with fallback
+const API_KEY = process.env.ELEVENLABS_API_KEY || 'your_api_key_here';
 const VOICE_ID = '21m00Tcm4TlvDq8ikWAM'; // Rachel voice
 
 async function testVoicesAPI() {

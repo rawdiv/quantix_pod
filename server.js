@@ -12,13 +12,17 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Ensure ELEVENLABS_API_KEY is set
-const API_KEY = process.env.ELEVENLABS_API_KEY || 'sk_5d377dbe2e70849fb975f769109318b284cf1c9a3bcbc16e';
+const API_KEY = process.env.ELEVENLABS_API_KEY;
+if (!API_KEY) {
+  console.error('ELEVENLABS_API_KEY environment variable is not set. Please configure your .env file.');
+  process.exit(1);
+}
 
 // Log environment variables (without sensitive data)
 console.log('Environment loaded:', {
   port: PORT,
   apiKeyPresent: !!API_KEY,
-  apiKeyLength: API_KEY ? API_KEY.length : 0
+  apiKeyLength: API_KEY.length
 });
 
 // Middleware

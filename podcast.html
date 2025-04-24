@@ -289,6 +289,49 @@
                 flex-direction: column;
             }
         }
+
+        /* Additional styles for preview section */
+        .preview-section {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .preview-section.active {
+            display: block;
+        }
+        
+        .preview-content {
+            margin-top: 1rem;
+        }
+        
+        .preview-segment {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .preview-host {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid rgba(59, 130, 246, 0.5);
+        }
+        
+        .preview-guest {
+            background: rgba(236, 72, 153, 0.1);
+            border-left: 3px solid rgba(236, 72, 153, 0.5);
+        }
+        
+        .preview-speaker {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .preview-text {
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
@@ -368,6 +411,13 @@
                 <button id="generate-button" class="generate-button">Generate Podcast</button>
                 <div id="loading" class="loading">Generating your podcast... This may take a few moments.</div>
 
+                <!-- Preview Section (Added) -->
+                <div id="preview-section" class="preview-section">
+                    <h2>Text Preview</h2>
+                    <p class="preview-description">This is how your text will be processed:</p>
+                    <div id="preview-content" class="preview-content"></div>
+                </div>
+
                 <!-- Result Section -->
                 <div id="result-section" class="result-section">
                     <h2>Your Podcast is Ready!</h2>
@@ -411,7 +461,7 @@
             });
         });
 
-        // Parse podcast script to separate speakers
+        // Parse podcast script to separate speakers with thorough cleaning
         function parseScript(text) {
             const lines = text.split('\n');
             const segments = [];
@@ -419,65 +469,40 @@
             let currentText = '';
             
             for (const line of lines) {
-                if (line.trim() === '') continue;
+                const trimmedLine = line.trim();
+                if (trimmedLine === '') continue;
                 
-                // Check for speaker prefixes
-                if (line.toLowerCase().startsWith('host:')) {
-                    // If there was previous text, add it as a segment
+                // Check for speaker pattern: anything followed by a colon
+                const colonIndex = trimmedLine.indexOf(':');
+                if (colonIndex > 0) {
+                    // Save previous segment if exists
                     if (currentText.trim()) {
                         segments.push({
                             speaker: currentSpeaker,
-                            text: currentText.trim()
+                            text: cleanText(currentText.trim())
                         });
                     }
-                    currentSpeaker = 'host';
-                    currentText = line.substring(5).trim(); // Remove "Host:" prefix
-                } else if (line.toLowerCase().startsWith('guest:')) {
-                    // If there was previous text, add it as a segment
-                    if (currentText.trim()) {
-                        segments.push({
-                            speaker: currentSpeaker,
-                            text: currentText.trim()
-                        });
+                    
+                    // Determine speaker type
+                    const speakerLabel = trimmedLine.substring(0, colonIndex).toLowerCase().trim();
+                    if (speakerLabel.includes('host') || 
+                        speakerLabel.includes('speaker 1') || 
+                        speakerLabel === '1' || 
+                        speakerLabel === 'a') {
+                        currentSpeaker = 'host';
+                    } else {
+                        currentSpeaker = 'guest';
                     }
-                    currentSpeaker = 'guest';
-                    currentText = line.substring(6).trim(); // Remove "Guest:" prefix
-                } else if (line.toLowerCase().startsWith('speaker 1:')) {
-                    // If there was previous text, add it as a segment
-                    if (currentText.trim()) {
-                        segments.push({
-                            speaker: currentSpeaker,
-                            text: currentText.trim()
-                        });
-                    }
-                    currentSpeaker = 'host';
-                    currentText = line.substring(10).trim(); // Remove "Speaker 1:" prefix
-                } else if (line.toLowerCase().startsWith('speaker 2:')) {
-                    // If there was previous text, add it as a segment
-                    if (currentText.trim()) {
-                        segments.push({
-                            speaker: currentSpeaker,
-                            text: currentText.trim()
-                        });
-                    }
-                    currentSpeaker = 'guest';
-                    currentText = line.substring(10).trim(); // Remove "Speaker 2:" prefix
-                } else if (line.match(/^[A-Za-z\s]+:/)) {
-                    // Generic speaker format detection (any name followed by colon)
-                    // If there was previous text, add it as a segment
-                    if (currentText.trim()) {
-                        segments.push({
-                            speaker: currentSpeaker,
-                            text: currentText.trim()
-                        });
-                    }
-                    // Alternate between host and guest for generic speakers
-                    currentSpeaker = currentSpeaker === 'host' ? 'guest' : 'host';
-                    // Extract text after the colon
-                    currentText = line.substring(line.indexOf(':') + 1).trim();
+                    
+                    // Get only the content after the colon
+                    currentText = trimmedLine.substring(colonIndex + 1).trim();
                 } else {
-                    // Continue with the current speaker
-                    currentText += ' ' + line.trim();
+                    // Continue with current speaker
+                    if (currentText) {
+                        currentText += ' ' + trimmedLine;
+                    } else {
+                        currentText = trimmedLine;
+                    }
                 }
             }
             
@@ -485,11 +510,89 @@
             if (currentText.trim()) {
                 segments.push({
                     speaker: currentSpeaker,
-                    text: currentText.trim()
+                    text: cleanText(currentText.trim())
                 });
             }
             
             return segments;
+        }
+        
+        // Clean text of formatting symbols
+        function cleanText(text) {
+            // Replace common Markdown formatting
+            let cleanedText = text
+                .replace(/\*\*|__/g, '') // Bold
+                .replace(/\*|_/g, '')    // Italic
+                .replace(/~~|`/g, '')    // Strikethrough, code
+                .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
+                .replace(/\[|\]/g, '')   // Brackets
+                .replace(/^[#]+\s/gm, '') // Headers
+                .replace(/\(|\)/g, '')   // Parentheses
+                
+                // Replace common symbols
+                .replace(/\//g, ' slash ')
+                .replace(/&/g, ' and ')
+                .replace(/%/g, ' percent ')
+                .replace(/\^/g, '')
+                .replace(/\+/g, ' plus ')
+                .replace(/=/g, ' equals ')
+                .replace(/\$/g, ' dollars ')
+                
+                // Clean up whitespace
+                .replace(/\s+/g, ' ')
+                .trim();
+            
+            // Remove any remaining speaker prefixes that might have been missed
+            cleanedText = cleanedText
+                .replace(/^(host|guest|speaker\s*\d+|interviewer|interviewee)\s*:\s*/i, '')
+                .replace(/^(speaker|person|voice)\s*[a-z0-9]+\s*:\s*/i, '');
+            
+            return cleanedText;
+        }
+
+        // Preview text before generating
+        podcastText.addEventListener('input', debounce(function() {
+            const text = podcastText.value.trim();
+            if (!text) {
+                document.getElementById('preview-section').classList.remove('active');
+                return;
+            }
+            
+            // Parse segments
+            const segments = parseScript(text);
+            const previewContent = document.getElementById('preview-content');
+            previewContent.innerHTML = '';
+            
+            // Create preview elements
+            segments.forEach((segment, index) => {
+                const previewSegment = document.createElement('div');
+                previewSegment.className = `preview-segment preview-${segment.speaker}`;
+                
+                const speakerEl = document.createElement('div');
+                speakerEl.className = 'preview-speaker';
+                speakerEl.textContent = segment.speaker === 'host' ? 'Host:' : 'Guest:';
+                
+                const textEl = document.createElement('div');
+                textEl.className = 'preview-text';
+                textEl.textContent = segment.text;
+                
+                previewSegment.appendChild(speakerEl);
+                previewSegment.appendChild(textEl);
+                previewContent.appendChild(previewSegment);
+            });
+            
+            // Show preview
+            document.getElementById('preview-section').classList.add('active');
+        }, 500));
+        
+        // Debounce function to limit preview updates
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
         }
 
         // Generate Podcast

@@ -310,7 +310,10 @@
                 <!-- Input Section -->
                 <div class="input-section">
                     <label class="input-label" for="podcast-text">Enter your podcast script:</label>
-                    <p class="format-hint">Format: Use "Host: " and "Guest: " to indicate different speakers.</p>
+                    <p class="format-hint">
+                        Format your conversation with speaker labels. The labels will be removed in the final audio.<br>
+                        You can use: "Host:", "Guest:", "Speaker 1:", "Speaker 2:", or any name followed by a colon.
+                    </p>
                     <textarea id="podcast-text" class="text-input" placeholder="Host: Welcome to our podcast!&#10;Guest: Thanks for having me.&#10;Host: Let's talk about..."></textarea>
                 </div>
 
@@ -428,7 +431,7 @@
                         });
                     }
                     currentSpeaker = 'host';
-                    currentText = line.substring(5).trim();
+                    currentText = line.substring(5).trim(); // Remove "Host:" prefix
                 } else if (line.toLowerCase().startsWith('guest:')) {
                     // If there was previous text, add it as a segment
                     if (currentText.trim()) {
@@ -438,7 +441,40 @@
                         });
                     }
                     currentSpeaker = 'guest';
-                    currentText = line.substring(6).trim();
+                    currentText = line.substring(6).trim(); // Remove "Guest:" prefix
+                } else if (line.toLowerCase().startsWith('speaker 1:')) {
+                    // If there was previous text, add it as a segment
+                    if (currentText.trim()) {
+                        segments.push({
+                            speaker: currentSpeaker,
+                            text: currentText.trim()
+                        });
+                    }
+                    currentSpeaker = 'host';
+                    currentText = line.substring(10).trim(); // Remove "Speaker 1:" prefix
+                } else if (line.toLowerCase().startsWith('speaker 2:')) {
+                    // If there was previous text, add it as a segment
+                    if (currentText.trim()) {
+                        segments.push({
+                            speaker: currentSpeaker,
+                            text: currentText.trim()
+                        });
+                    }
+                    currentSpeaker = 'guest';
+                    currentText = line.substring(10).trim(); // Remove "Speaker 2:" prefix
+                } else if (line.match(/^[A-Za-z\s]+:/)) {
+                    // Generic speaker format detection (any name followed by colon)
+                    // If there was previous text, add it as a segment
+                    if (currentText.trim()) {
+                        segments.push({
+                            speaker: currentSpeaker,
+                            text: currentText.trim()
+                        });
+                    }
+                    // Alternate between host and guest for generic speakers
+                    currentSpeaker = currentSpeaker === 'host' ? 'guest' : 'host';
+                    // Extract text after the colon
+                    currentText = line.substring(line.indexOf(':') + 1).trim();
                 } else {
                     // Continue with the current speaker
                     currentText += ' ' + line.trim();

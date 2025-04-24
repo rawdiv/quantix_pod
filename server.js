@@ -183,6 +183,12 @@ app.post('/api/generate-conversation', async (req, res) => {
             const segment = segments[i];
             console.log(`Processing segment ${i+1}/${segments.length}, speaker: ${segment.speaker}`);
             
+            // Skip empty segments
+            if (!segment.text || segment.text.trim() === '') {
+                console.log('Skipping empty segment');
+                continue;
+            }
+            
             // Get the proper voice ID
             const voiceType = voices[segment.speaker]; // e.g., 'rachel', 'mike', etc.
             const voiceId = VOICE_IDS[voiceType];
@@ -199,6 +205,9 @@ app.post('/api/generate-conversation', async (req, res) => {
             if (i < segments.length - 1) {
                 // We'll handle this in the concatenation process
                 console.log('Adding pause between segments');
+                
+                // In a real implementation, we'd add silence here
+                // For now, we'll just leave a gap in the MP3 concatenation
             }
         }
         

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Your Podcast - QuantPod</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main {
+            padding-top: 100px;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #111, #000);
+        }
+
+        .generator-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .generator-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Input Section */
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #aaa;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        /* Voice Selection */
+        .voice-section {
+            margin-bottom: 2rem;
+        }
+
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .voice-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .voice-card:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .voice-card.selected {
+            border-color: rgba(59, 130, 246, 0.8);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .voice-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .voice-description {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* Settings */
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .setting-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #aaa;
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        /* Generate Button */
+        .generate-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.2);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .generate-button:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .generate-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            color: #aaa;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        /* Result Section */
+        .result-section {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .audio-player {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .download-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(59, 130, 246, 0.2);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            margin-top: 1rem;
+        }
+
+        .download-button:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .generator-container {
+                padding: 20px;
+            }
+
+            .generator-title {
+                font-size: 2rem;
+            }
+
+            .voice-grid,
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Additional styles for two-speaker layout */
+        .format-hint {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .voice-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .voice-column {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .voice-row {
+                flex-direction: column;
+            }
+        }
+
+        /* Additional styles for preview section */
+        .preview-section {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .preview-section.active {
+            display: block;
+        }
+        
+        .preview-content {
+            margin-top: 1rem;
+        }
+        
+        .preview-segment {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .preview-host {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid rgba(59, 130, 246, 0.5);
+        }
+        
+        .preview-guest {
+            background: rgba(236, 72, 153, 0.1);
+            border-left: 3px solid rgba(236, 72, 153, 0.5);
+        }
+        
+        .preview-speaker {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .preview-text {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">QuantPod</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="generator-container">
+                <h1 class="generator-title">Generate Your Podcast</h1>
+
+                <!-- Input Section -->
+                <div class="input-section">
+                    <label class="input-label" for="podcast-text">Enter your podcast script:</label>
+                    <p class="format-hint">
+                        Format your conversation with speaker labels. The labels will be removed in the final audio.<br>
+                        You can use: "Host:", "Guest:", "Speaker 1:", "Speaker 2:", or any name followed by a colon.
+                    </p>
+                    <textarea id="podcast-text" class="text-input" placeholder="Host: Welcome to our podcast!&#10;Guest: Thanks for having me.&#10;Host: Let's talk about..."></textarea>
+                </div>
+
+                <!-- Voice Selection -->
+                <div class="voice-section">
+                    <div class="voice-row">
+                        <div class="voice-column">
+                            <label class="input-label">Host Voice:</label>
+                            <div class="voice-grid">
+                                <div class="voice-card" data-voice="mike" data-speaker="host">
+                                    <div class="voice-name">Mike</div>
+                                    <div class="voice-description">Professional male voice</div>
+                                </div>
+                                <div class="voice-card" data-voice="rachel" data-speaker="host">
+                                    <div class="voice-name">Charlotte</div>
+                                    <div class="voice-description">Professional female voice</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="voice-column">
+                            <label class="input-label">Guest Voice:</label>
+                            <div class="voice-grid">
+                                <div class="voice-card" data-voice="david" data-speaker="guest">
+                                    <div class="voice-name">Daniel</div>
+                                    <div class="voice-description">Conversational male voice</div>
+                                </div>
+                                <div class="voice-card" data-voice="sarah" data-speaker="guest">
+                                    <div class="voice-name">Sarah</div>
+                                    <div class="voice-description">Conversational female voice</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="settings-section">
+                    <label class="input-label">Settings:</label>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <label class="setting-label">Speed</label>
+                            <input type="range" class="setting-input" id="speed" min="0.5" max="2" step="0.1" value="1">
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">Pitch</label>
+                            <input type="range" class="setting-input" id="pitch" min="0.5" max="2" step="0.1" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <button id="generate-button" class="generate-button">Generate Podcast</button>
+                <div id="loading" class="loading">Generating your podcast... This may take a few moments.</div>
+
+                <!-- Preview Section (Added) -->
+                <div id="preview-section" class="preview-section">
+                    <h2>Text Preview</h2>
+                    <p class="preview-description">This is how your text will be processed:</p>
+                    <div id="preview-content" class="preview-content"></div>
+                </div>
+
+                <!-- Result Section -->
+                <div id="result-section" class="result-section">
+                    <h2>Your Podcast is Ready!</h2>
+                    <audio id="audio-player" class="audio-player" controls></audio>
+                    <a id="download-button" class="download-button" href="#" download>Download Podcast</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const podcastText = document.getElementById('podcast-text');
+        const speedInput = document.getElementById('speed');
+        const pitchInput = document.getElementById('pitch');
+        const generateButton = document.getElementById('generate-button');
+        const loading = document.getElementById('loading');
+        const resultSection = document.getElementById('result-section');
+        const audioPlayer = document.getElementById('audio-player');
+        const downloadButton = document.getElementById('download-button');
+
+        // Voice Selection
+        let selectedVoices = {
+            host: 'mike',  // Default host voice
+            guest: 'sarah' // Default guest voice
+        };
+        
+        const voiceCards = document.querySelectorAll('.voice-card');
+        voiceCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Remove selected class from cards in the same speaker group
+                document.querySelectorAll(`.voice-card[data-speaker="${card.dataset.speaker}"]`)
+                    .forEach(c => c.classList.remove('selected'));
+                
+                // Add selected class to clicked card
+                card.classList.add('selected');
+                
+                // Update selected voice for the speaker
+                selectedVoices[card.dataset.speaker] = card.dataset.voice;
+                console.log('Selected voices:', selectedVoices);
+            });
+        });
+
+        // Parse podcast script to separate speakers with thorough cleaning
+        function parseScript(text) {
+            const lines = text.split('\n');
+            const segments = [];
+            let currentSpeaker = 'host';
+            let currentText = '';
+            
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (trimmedLine === '') continue;
+                
+                // Check for speaker pattern: anything followed by a colon
+                const colonIndex = trimmedLine.indexOf(':');
+                if (colonIndex > 0) {
+                    // Save previous segment if exists
+                    if (currentText.trim()) {
+                        segments.push({
+                            speaker: currentSpeaker,
+                            text: cleanText(currentText.trim())
+                        });
+                    }
+                    
+                    // Determine speaker type
+                    const speakerLabel = trimmedLine.substring(0, colonIndex).toLowerCase().trim();
+                    if (speakerLabel.includes('host') || 
+                        speakerLabel.includes('speaker 1') || 
+                        speakerLabel === '1' || 
+                        speakerLabel === 'a') {
+                        currentSpeaker = 'host';
+                    } else {
+                        currentSpeaker = 'guest';
+                    }
+                    
+                    // Get only the content after the colon
+                    currentText = trimmedLine.substring(colonIndex + 1).trim();
+                } else {
+                    // Continue with current speaker
+                    if (currentText) {
+                        currentText += ' ' + trimmedLine;
+                    } else {
+                        currentText = trimmedLine;
+                    }
+                }
+            }
+            
+            // Add the last segment
+            if (currentText.trim()) {
+                segments.push({
+                    speaker: currentSpeaker,
+                    text: cleanText(currentText.trim())
+                });
+            }
+            
+            return segments;
+        }
+        
+        // Clean text of formatting symbols
+        function cleanText(text) {
+            // Replace common Markdown formatting
+            let cleanedText = text
+                .replace(/\*\*|__/g, '') // Bold
+                .replace(/\*|_/g, '')    // Italic
+                .replace(/~~|`/g, '')    // Strikethrough, code
+                .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
+                .replace(/\[|\]/g, '')   // Brackets
+                .replace(/^[#]+\s/gm, '') // Headers
+                .replace(/\(|\)/g, '')   // Parentheses
+                
+                // Replace common symbols
+                .replace(/\//g, ' slash ')
+                .replace(/&/g, ' and ')
+                .replace(/%/g, ' percent ')
+                .replace(/\^/g, '')
+                .replace(/\+/g, ' plus ')
+                .replace(/=/g, ' equals ')
+                .replace(/\$/g, ' dollars ')
+                
+                // Clean up whitespace
+                .replace(/\s+/g, ' ')
+                .trim();
+            
+            // Remove any remaining speaker prefixes that might have been missed
+            cleanedText = cleanedText
+                .replace(/^(host|guest|speaker\s*\d+|interviewer|interviewee)\s*:\s*/i, '')
+                .replace(/^(speaker|person|voice)\s*[a-z0-9]+\s*:\s*/i, '');
+            
+            return cleanedText;
+        }
+
+        // Preview text before generating
+        podcastText.addEventListener('input', debounce(function() {
+            const text = podcastText.value.trim();
+            if (!text) {
+                document.getElementById('preview-section').classList.remove('active');
+                return;
+            }
+            
+            // Parse segments
+            const segments = parseScript(text);
+            const previewContent = document.getElementById('preview-content');
+            previewContent.innerHTML = '';
+            
+            // Create preview elements
+            segments.forEach((segment, index) => {
+                const previewSegment = document.createElement('div');
+                previewSegment.className = `preview-segment preview-${segment.speaker}`;
+                
+                const speakerEl = document.createElement('div');
+                speakerEl.className = 'preview-speaker';
+                speakerEl.textContent = segment.speaker === 'host' ? 'Host:' : 'Guest:';
+                
+                const textEl = document.createElement('div');
+                textEl.className = 'preview-text';
+                textEl.textContent = segment.text;
+                
+                previewSegment.appendChild(speakerEl);
+                previewSegment.appendChild(textEl);
+                previewContent.appendChild(previewSegment);
+            });
+            
+            // Show preview
+            document.getElementById('preview-section').classList.add('active');
+        }, 500));
+        
+        // Debounce function to limit preview updates
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+
+        // Generate Podcast
+        generateButton.addEventListener('click', async () => {
+            const text = podcastText.value.trim();
+
+            // Make sure we have text
+            if (!text) {
+                alert('Please enter your podcast script');
+                return;
+            }
+
+            // Parse the script into segments
+            const segments = parseScript(text);
+            console.log('Parsed segments:', segments);
+            
+            if (segments.length === 0) {
+                alert('Please format your script with "Host:" and "Guest:" prefixes');
+                return;
+            }
+
+            // Show loading state
+            generateButton.disabled = true;
+            loading.classList.add('active');
+            loading.innerText = "Generating your conversational podcast... This may take 20-60 seconds.";
+            resultSection.classList.remove('active');
+
+            try {
+                console.log('Sending request to server...');
+                
+                const response = await fetch('http://localhost:3000/api/generate-conversation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        segments: segments,
+                        voices: selectedVoices
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response type:', response.headers.get('content-type'));
+
+                if (!response.ok) {
+                    let errorText = 'Failed to generate podcast';
+                    try {
+                        const errorData = await response.json();
+                        console.error('Server Error:', errorData);
+                        errorText = errorData.error || errorText;
+                    } catch (e) {
+                        console.error('Could not parse error response', e);
+                    }
+                    throw new Error(errorText);
+                }
+
+                // Get audio data
+                const audioBlob = await response.blob();
+                console.log('Received audio blob size:', audioBlob.size);
+                
+                if (audioBlob.size === 0) {
+                    throw new Error('Received empty audio file. Please try again.');
+                }
+                
+                const audioUrl = URL.createObjectURL(audioBlob);
+
+                // Update audio player
+                audioPlayer.src = audioUrl;
+                downloadButton.href = audioUrl;
+                downloadButton.download = `podcast-${Date.now()}.mp3`;
+
+                // Show result
+                resultSection.classList.add('active');
+            } catch (error) {
+                console.error('Error generating podcast:', error);
+                alert(`Failed to generate podcast: ${error.message}\n\nPlease try again with a shorter text or check the console for more details.`);
+            } finally {
+                // Reset loading state
+                generateButton.disabled = false;
+                loading.classList.remove('active');
+                loading.innerText = "Generating your podcast... This may take a few moments.";
+            }
+        });
+
+        // Initialize voices as selected
+        document.querySelector('.voice-card[data-speaker="host"]').classList.add('selected');
+        document.querySelector('.voice-card[data-speaker="guest"]').classList.add('selected');
+    </script>
+</body>
+</html> 

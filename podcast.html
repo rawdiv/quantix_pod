@@ -267,6 +267,28 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Additional styles for two-speaker layout */
+        .format-hint {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .voice-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .voice-column {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .voice-row {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -288,28 +310,38 @@
                 <!-- Input Section -->
                 <div class="input-section">
                     <label class="input-label" for="podcast-text">Enter your podcast script:</label>
-                    <textarea id="podcast-text" class="text-input" placeholder="Type your podcast script here..."></textarea>
+                    <p class="format-hint">Format: Use "Host: " and "Guest: " to indicate different speakers.</p>
+                    <textarea id="podcast-text" class="text-input" placeholder="Host: Welcome to our podcast!&#10;Guest: Thanks for having me.&#10;Host: Let's talk about..."></textarea>
                 </div>
 
                 <!-- Voice Selection -->
                 <div class="voice-section">
-                    <label class="input-label">Select Voice:</label>
-                    <div class="voice-grid">
-                        <div class="voice-card" data-voice="rachel">
-                            <div class="voice-name">Rachel</div>
-                            <div class="voice-description">Professional, clear female voice</div>
+                    <div class="voice-row">
+                        <div class="voice-column">
+                            <label class="input-label">Host Voice:</label>
+                            <div class="voice-grid">
+                                <div class="voice-card" data-voice="mike" data-speaker="host">
+                                    <div class="voice-name">Mike</div>
+                                    <div class="voice-description">Professional male voice</div>
+                                </div>
+                                <div class="voice-card" data-voice="rachel" data-speaker="host">
+                                    <div class="voice-name">Charlotte</div>
+                                    <div class="voice-description">Professional female voice</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="voice-card" data-voice="mike">
-                            <div class="voice-name">Mike</div>
-                            <div class="voice-description">Professional, clear male voice</div>
-                        </div>
-                        <div class="voice-card" data-voice="sarah">
-                            <div class="voice-name">Sarah</div>
-                            <div class="voice-description">Friendly, conversational female voice</div>
-                        </div>
-                        <div class="voice-card" data-voice="david">
-                            <div class="voice-name">David</div>
-                            <div class="voice-description">Friendly, conversational male voice</div>
+                        <div class="voice-column">
+                            <label class="input-label">Guest Voice:</label>
+                            <div class="voice-grid">
+                                <div class="voice-card" data-voice="david" data-speaker="guest">
+                                    <div class="voice-name">Daniel</div>
+                                    <div class="voice-description">Conversational male voice</div>
+                                </div>
+                                <div class="voice-card" data-voice="sarah" data-speaker="guest">
+                                    <div class="voice-name">Sarah</div>
+                                    <div class="voice-description">Conversational female voice</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -318,10 +350,6 @@
                 <div class="settings-section">
                     <label class="input-label">Settings:</label>
                     <div class="settings-grid">
-                        <div class="setting-item">
-                            <label class="setting-label">ElevenLabs API Key</label>
-                            <input type="password" id="api-key" class="setting-input" placeholder="Enter your ElevenLabs API key">
-                        </div>
                         <div class="setting-item">
                             <label class="setting-label">Speed</label>
                             <input type="range" class="setting-input" id="speed" min="0.5" max="2" step="0.1" value="1">
@@ -348,12 +376,8 @@
     </main>
 
     <script>
-        // ElevenLabs API Configuration
-        const ELEVENLABS_API_URL = 'https://api.elevenlabs.io/v1/text-to-speech';
-
         // DOM Elements
         const podcastText = document.getElementById('podcast-text');
-        const apiKeyInput = document.getElementById('api-key');
         const speedInput = document.getElementById('speed');
         const pitchInput = document.getElementById('pitch');
         const generateButton = document.getElementById('generate-button');
@@ -362,35 +386,75 @@
         const audioPlayer = document.getElementById('audio-player');
         const downloadButton = document.getElementById('download-button');
 
-        // Load saved API key if exists
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedApiKey = localStorage.getItem('elevenlabs_api_key');
-            if (savedApiKey) {
-                apiKeyInput.value = savedApiKey;
-            } else {
-                // Set the provided API key
-                const defaultApiKey = 'sk_5d377dbe2e70849fb975f769109318b284cf1c9a3bcbc16e';
-                apiKeyInput.value = defaultApiKey;
-                localStorage.setItem('elevenlabs_api_key', defaultApiKey);
-            }
-        });
-
-        // Save API key when changed
-        apiKeyInput.addEventListener('change', () => {
-            localStorage.setItem('elevenlabs_api_key', apiKeyInput.value);
-        });
-
         // Voice Selection
-        let selectedVoice = 'rachel'; // Default voice
+        let selectedVoices = {
+            host: 'mike',  // Default host voice
+            guest: 'sarah' // Default guest voice
+        };
+        
         const voiceCards = document.querySelectorAll('.voice-card');
         voiceCards.forEach(card => {
             card.addEventListener('click', () => {
-                voiceCards.forEach(c => c.classList.remove('selected'));
+                // Remove selected class from cards in the same speaker group
+                document.querySelectorAll(`.voice-card[data-speaker="${card.dataset.speaker}"]`)
+                    .forEach(c => c.classList.remove('selected'));
+                
+                // Add selected class to clicked card
                 card.classList.add('selected');
-                selectedVoice = card.dataset.voice;
-                console.log('Selected voice:', selectedVoice);
+                
+                // Update selected voice for the speaker
+                selectedVoices[card.dataset.speaker] = card.dataset.voice;
+                console.log('Selected voices:', selectedVoices);
             });
         });
+
+        // Parse podcast script to separate speakers
+        function parseScript(text) {
+            const lines = text.split('\n');
+            const segments = [];
+            let currentSpeaker = 'host';
+            let currentText = '';
+            
+            for (const line of lines) {
+                if (line.trim() === '') continue;
+                
+                // Check for speaker prefixes
+                if (line.toLowerCase().startsWith('host:')) {
+                    // If there was previous text, add it as a segment
+                    if (currentText.trim()) {
+                        segments.push({
+                            speaker: currentSpeaker,
+                            text: currentText.trim()
+                        });
+                    }
+                    currentSpeaker = 'host';
+                    currentText = line.substring(5).trim();
+                } else if (line.toLowerCase().startsWith('guest:')) {
+                    // If there was previous text, add it as a segment
+                    if (currentText.trim()) {
+                        segments.push({
+                            speaker: currentSpeaker,
+                            text: currentText.trim()
+                        });
+                    }
+                    currentSpeaker = 'guest';
+                    currentText = line.substring(6).trim();
+                } else {
+                    // Continue with the current speaker
+                    currentText += ' ' + line.trim();
+                }
+            }
+            
+            // Add the last segment
+            if (currentText.trim()) {
+                segments.push({
+                    speaker: currentSpeaker,
+                    text: currentText.trim()
+                });
+            }
+            
+            return segments;
+        }
 
         // Generate Podcast
         generateButton.addEventListener('click', async () => {
@@ -402,28 +466,32 @@
                 return;
             }
 
-            // Use a shorter text for testing if needed
-            const useText = text.length > 1000 ? text.substring(0, 1000) + "..." : text;
+            // Parse the script into segments
+            const segments = parseScript(text);
+            console.log('Parsed segments:', segments);
+            
+            if (segments.length === 0) {
+                alert('Please format your script with "Host:" and "Guest:" prefixes');
+                return;
+            }
 
             // Show loading state
             generateButton.disabled = true;
             loading.classList.add('active');
-            loading.innerText = "Generating your podcast... This may take 10-30 seconds.";
+            loading.innerText = "Generating your conversational podcast... This may take 20-60 seconds.";
             resultSection.classList.remove('active');
 
             try {
                 console.log('Sending request to server...');
-                console.log('Text length:', useText.length);
-                console.log('Selected voice:', selectedVoice);
-
-                const response = await fetch('http://localhost:3000/api/generate-podcast', {
+                
+                const response = await fetch('http://localhost:3000/api/generate-conversation', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        text: useText,
-                        voice_id: selectedVoice
+                        segments: segments,
+                        voices: selectedVoices
                     })
                 });
 
@@ -470,8 +538,9 @@
             }
         });
 
-        // Initialize first voice as selected
-        voiceCards[0].classList.add('selected');
+        // Initialize voices as selected
+        document.querySelector('.voice-card[data-speaker="host"]').classList.add('selected');
+        document.querySelector('.voice-card[data-speaker="guest"]').classList.add('selected');
     </script>
 </body>
 </html> 

@@ -748,7 +748,7 @@
             try {
                 console.log('Sending request to server...');
                 
-                const response = await fetch('http://localhost:3000/api/generate-conversation', {
+                const response = await fetch('/api/generate-conversation', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

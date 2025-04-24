@@ -7,33 +7,8 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Additional styles for enhanced index page */
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0); }
-        }
-        
-        .animate-pulse {
-            animation: pulse 3s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.8; }
-            50% { opacity: 1; }
-            100% { opacity: 0.8; }
-        }
-        
-        .hero {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .background-elements {
+        /* Orbit Lines Styles */
+        .orbit-container {
             position: absolute;
             top: 0;
             left: 0;
@@ -41,241 +16,171 @@
             height: 100%;
             z-index: 0;
             overflow: hidden;
-            opacity: 0.1;
+            pointer-events: none;
         }
-        
-        .background-element {
+
+        .orbit {
             position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #3b82f6, #ec4899);
-            opacity: 0.3;
-        }
-        
-        .testimonial-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .testimonial-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(59, 130, 246, 0.5);
-        }
-        
-        .author-info {
-            display: flex;
-            align-items: center;
-            margin-top: 1rem;
-        }
-        
-        .author-avatar {
-            width: 50px;
-            height: 50px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #3b82f6, #ec4899);
-            margin-right: 1rem;
-            overflow: hidden;
+            animation: orbit-rotation 20s linear infinite;
+            transform-origin: center;
         }
-        
-        .pricing-section {
-            padding: 6rem 2rem;
-            background: linear-gradient(to bottom, #111, #000);
-        }
-        
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 3rem auto 0;
-        }
-        
-        .pricing-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(59, 130, 246, 0.5);
-        }
-        
-        .pricing-card.featured {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.1);
-        }
-        
-        .pricing-badge {
+
+        .orbit::before {
+            content: '';
             position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: orbit-pulse 3s ease-in-out infinite;
+        }
+
+        .orbit:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            margin-top: -150px;
+            margin-left: -150px;
+            animation-duration: 20s;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .orbit:nth-child(1)::before {
             top: 0;
+            left: 50%;
+            margin-left: -4px;
+        }
+
+        .orbit:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            top: 50%;
+            left: 50%;
+            margin-top: -250px;
+            margin-left: -250px;
+            animation-duration: 30s;
+            animation-direction: reverse;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .orbit:nth-child(2)::before {
+            top: 50%;
+            left: 0;
+            margin-top: -4px;
+        }
+
+        .orbit:nth-child(3) {
+            width: 700px;
+            height: 700px;
+            top: 50%;
+            left: 50%;
+            margin-top: -350px;
+            margin-left: -350px;
+            animation-duration: 40s;
+            border-color: rgba(255, 255, 255, 0.05);
+            border-width: 2px;
+            border-style: dashed;
+        }
+
+        .orbit:nth-child(3)::before {
+            bottom: 0;
+            right: 50%;
+            margin-right: -4px;
+        }
+
+        .orbit:nth-child(4) {
+            width: 900px;
+            height: 400px;
+            top: 50%;
+            left: 50%;
+            margin-top: -200px;
+            margin-left: -450px;
+            animation-duration: 50s;
+            animation-direction: reverse;
+            border-color: rgba(255, 255, 255, 0.03);
+            transform: rotate(45deg);
+            border-width: 1.5px;
+            border-style: dotted;
+        }
+
+        .orbit:nth-child(4)::before {
+            top: 50%;
             right: 0;
-            background: #3b82f6;
-            color: white;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            border-radius: 0 0 0 12px;
+            margin-top: -4px;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, #ffffff, #cccccc);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
         }
-        
-        .pricing-header {
-            margin-bottom: 2rem;
+
+        @keyframes orbit-rotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
-        
-        .pricing-tier {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+
+        @keyframes orbit-pulse {
+            0% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
         }
-        
-        .pricing-cost {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #fff, #aaa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        /* Enhanced orbit styling for more variety */
+        .orbit:nth-child(3) {
+            border-width: 2px;
+            border-style: dashed;
         }
-        
-        .pricing-period {
-            font-size: 1rem;
-            color: #aaa;
+
+        .orbit:nth-child(4) {
+            border-width: 1.5px;
+            border-style: dotted;
         }
-        
-        .pricing-features {
-            list-style: none;
-            margin: 2rem 0;
-            padding: 0;
-            flex-grow: 1;
+
+        .orbit:nth-child(4)::before {
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, #ffffff, #cccccc);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
         }
-        
-        .pricing-features li {
-            padding: 0.5rem 0;
-            position: relative;
-            padding-left: 1.5rem;
-            color: #aaa;
+
+        /* Add elliptical orbits for more visual interest */
+        .features .orbit:nth-child(3),
+        .pricing-section .orbit:nth-child(3),
+        .footer .orbit:nth-child(3) {
+            border-radius: 40% 60%;
+            animation: orbit-rotation-reverse 25s linear infinite;
         }
-        
-        .pricing-features li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #3b82f6;
+
+        .how-it-works .orbit:nth-child(4),
+        .testimonials .orbit:nth-child(4),
+        .news-section .orbit:nth-child(4) {
+            border-radius: 45% 55%;
+            animation: orbit-rotation-reverse 35s linear infinite;
         }
-        
-        .news-section {
-            padding: 5rem 2rem;
-            background: #000;
-            text-align: center;
-        }
-        
-        .news-form {
-            max-width: 500px;
-            margin: 2rem auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .news-input {
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            font-size: 1rem;
-        }
-        
-        .news-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-        
-        .footer {
-            padding: 4rem 2rem 2rem;
-            background: #111;
-        }
-        
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto 3rem;
-        }
-        
-        .footer-col h3 {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .footer-col h3::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -0.5rem;
-            width: 50px;
-            height: 2px;
-            background: #3b82f6;
-        }
-        
-        .footer-col ul {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .footer-col ul li {
-            margin-bottom: 0.8rem;
-        }
-        
-        .footer-col ul li a {
-            color: #aaa;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-col ul li a:hover {
-            color: #3b82f6;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .social-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .social-link:hover {
-            background: #3b82f6;
-            transform: translateY(-3px);
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #aaa;
-            font-size: 0.9rem;
+
+        @keyframes orbit-rotation-reverse {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(-360deg);
+            }
         }
     </style>
 </head>
@@ -283,49 +188,62 @@
     <header>
         <nav>
             <div class="logo">Quantix Pod</div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <ul>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#testimonials">Testimonials</a></li>
                 <li><a href="#pricing">Pricing</a></li>
-                <li><a href="podcast.html" class="cta-button">Generate Podcast</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
         <section class="hero">
-            <div class="background-elements">
-                <!-- Generated background elements -->
+            <div class="orbit-container">
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
             </div>
-            <h1 class="animate-float">Transform Your Content into Professional Podcasts</h1>
+            <h1>Transform Your Content into Professional Podcasts</h1>
             <p>Create high-quality podcasts from your text in minutes using advanced AI technology.</p>
-            <a href="podcast.html" class="cta-button animate-pulse">Start Creating</a>
+            <a href="podcast.html" class="cta-button">Start Creating</a>
             <div class="hero-image">
-                <img src="https://placehold.co/600x400/111/3b82f6/png?text=AI+Podcast" alt="AI Podcast Generator" class="animate-float" style="border-radius:12px; margin-top:3rem; max-width:100%; width:600px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5)">
+                <img src="https://placehold.co/600x400/111/fff/png?text=AI+Podcast" alt="AI Podcast Generator" class="animate-float" style="border-radius:12px; margin-top:3rem; max-width:100%; width:600px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5)">
             </div>
         </section>
 
         <section id="features" class="features">
+            <div class="orbit-container">
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+            </div>
             <h2>Features</h2>
             <div class="feature-grid">
                 <div class="feature-card">
-                    <i class="fas fa-microphone-alt" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+                    <i class="fas fa-microphone-alt"></i>
                     <h3>Natural Voices</h3>
                     <p>Choose from multiple AI voices that sound human-like and engaging to your audience.</p>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-bolt" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+                    <i class="fas fa-bolt"></i>
                     <h3>Easy to Use</h3>
                     <p>Simple interface that lets you create podcasts in just a few clicks without technical knowledge.</p>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-music" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+                    <i class="fas fa-music"></i>
                     <h3>High Quality</h3>
                     <p>Professional-grade audio output that's ready to publish on any podcast platform.</p>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-comments" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+                    <i class="fas fa-comments"></i>
                     <h3>Conversational Format</h3>
                     <p>Create engaging dialogues between multiple speakers for dynamic, interesting content.</p>
                 </div>
@@ -333,6 +251,12 @@
         </section>
 
         <section id="how-it-works" class="how-it-works">
+            <div class="orbit-container">
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+            </div>
             <h2>How It Works</h2>
             <div class="steps">
                 <div class="step">
@@ -354,6 +278,12 @@
         </section>
         
         <section id="testimonials" class="testimonials">
+            <div class="orbit-container">
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+            </div>
             <h2>What Our Users Say</h2>
             <div class="testimonial-grid">
                 <div class="testimonial-card">
@@ -413,6 +343,12 @@
         </section>
         
         <section id="pricing" class="pricing-section">
+            <div class="orbit-container">
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+            </div>
             <h2>Choose Your Plan</h2>
             <p class="section-desc">Find a pricing plan that fits your needs</p>
             
@@ -471,104 +407,207 @@
         </section>
         
         <section id="newsletter" class="news-section">
+            <div class="orbit-container">
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+            </div>
             <h2>Stay Updated</h2>
-            <p>Subscribe to our newsletter for the latest features and updates</p>
+            <p>Subscribe to our newsletter for the latest features, updates, and exclusive content.</p>
             
             <form class="news-form">
-                <input type="email" placeholder="Your email address" class="news-input" required>
-                <button type="submit" class="cta-button">Subscribe</button>
+                <div class="input-group">
+                    <input type="email" placeholder="Your email address" class="news-input" required>
+                    <button type="submit" class="cta-button">Subscribe</button>
+                </div>
+                <p class="form-note">By subscribing, you agree to our <a href="#">Privacy Policy</a> and consent to receive updates from our company.</p>
             </form>
         </section>
     </main>
 
     <footer class="footer">
-        <div class="footer-grid">
-            <div class="footer-col">
+        <div class="orbit-container">
+            <div class="orbit"></div>
+            <div class="orbit"></div>
+            <div class="orbit"></div>
+            <div class="orbit"></div>
+        </div>
+        <div class="footer-content">
+            <div class="footer-brand">
                 <h3>Quantix Pod</h3>
-                <p>Advanced AI podcast generation platform for creators, educators, and businesses.</p>
+                <p>Advanced AI podcast generation platform for creators, educators, and businesses. Transform your content into professional podcasts with ease.</p>
                 <div class="social-links">
-                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
             
-            <div class="footer-col">
-                <h3>Product</h3>
+            <div class="footer-links-column">
+                <h4>Product</h4>
                 <ul>
                     <li><a href="#features">Features</a></li>
                     <li><a href="#pricing">Pricing</a></li>
                     <li><a href="#">API</a></li>
                     <li><a href="#">Integrations</a></li>
+                    <li><a href="#">Updates</a></li>
                 </ul>
             </div>
             
-            <div class="footer-col">
-                <h3>Resources</h3>
+            <div class="footer-links-column">
+                <h4>Resources</h4>
                 <ul>
                     <li><a href="#">Documentation</a></li>
                     <li><a href="#">Tutorials</a></li>
                     <li><a href="#">Blog</a></li>
                     <li><a href="#">Community</a></li>
+                    <li><a href="#">Support</a></li>
                 </ul>
             </div>
             
-            <div class="footer-col">
-                <h3>Company</h3>
+            <div class="footer-links-column">
+                <h4>Company</h4>
                 <ul>
                     <li><a href="#">About Us</a></li>
                     <li><a href="#">Careers</a></li>
                     <li><a href="#">Contact</a></li>
                     <li><a href="#">Press</a></li>
+                    <li><a href="#">Partners</a></li>
                 </ul>
             </div>
             
-            <div class="footer-col">
-                <h3>Legal</h3>
+            <div class="footer-links-column">
+                <h4>Legal</h4>
                 <ul>
                     <li><a href="#">Terms of Service</a></li>
                     <li><a href="#">Privacy Policy</a></li>
                     <li><a href="#">Cookie Policy</a></li>
                     <li><a href="#">GDPR</a></li>
+                    <li><a href="#">Compliance</a></li>
                 </ul>
             </div>
         </div>
         
         <div class="footer-bottom">
             <p>&copy; 2024 Quantix Pod. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+                <a href="#">GDPR</a>
+            </div>
         </div>
     </footer>
 
-    <script src="script.js"></script>
     <script>
-        // Generate background elements
-        document.addEventListener('DOMContentLoaded', function() {
-            const bgContainer = document.querySelector('.background-elements');
-            const numElements = 15;
+        // Hamburger Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('nav ul');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.feature-card, .testimonial-card, .pricing-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.5s ease';
+            observer.observe(card);
+        });
+
+        // Randomize orbit positions in each section
+        document.querySelectorAll('.orbit-container').forEach((container, containerIndex) => {
+            const orbits = container.querySelectorAll('.orbit');
+            const section = container.closest('section') || container.closest('footer');
+            const sectionId = section ? section.id || 'footer' : 'unknown';
             
-            for (let i = 0; i < numElements; i++) {
-                const element = document.createElement('div');
-                element.classList.add('background-element');
+            // Random values for sizes, positions, and animation speeds
+            orbits.forEach((orbit, index) => {
+                // Base values with wider ranges for more variety
+                const size = 150 + Math.random() * 600; // Larger max size
+                const xOffset = (Math.random() - 0.5) * 300; // More horizontal variation
+                const yOffset = (Math.random() - 0.5) * 300; // More vertical variation
+                const duration = 15 + Math.random() * 60; // Wider range of speeds
+                const angle = Math.random() * 180; // Full range of rotation
+                const opacity = 0.05 + Math.random() * 0.2; // Slightly higher max opacity
                 
-                // Random size between 50px and 300px
-                const size = Math.random() * 250 + 50;
-                element.style.width = `${size}px`;
-                element.style.height = `${size}px`;
+                // More varied orbit shapes
+                const isElliptical = Math.random() > 0.5;
+                const widthScale = isElliptical ? 0.7 + Math.random() * 0.6 : 1;
+                const heightScale = isElliptical ? 0.7 + Math.random() * 0.6 : 1;
                 
-                // Random position
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                element.style.left = `${posX}%`;
-                element.style.top = `${posY}%`;
+                // Apply different styles for each orbit
+                orbit.style.width = `${size * widthScale}px`;
+                orbit.style.height = `${size * heightScale}px`;
+                orbit.style.top = `50%`;
+                orbit.style.left = `50%`;
+                orbit.style.marginTop = `-${(size * heightScale)/2 - yOffset}px`;
+                orbit.style.marginLeft = `-${(size * widthScale)/2 - xOffset}px`;
+                orbit.style.animationDuration = `${duration}s`;
+                orbit.style.transform = `rotate(${angle}deg)`;
                 
-                // Random animation duration
-                const animDuration = Math.random() * 20 + 10;
-                element.style.animation = `float ${animDuration}s ease-in-out infinite`;
-                element.style.animationDelay = `${Math.random() * 5}s`;
+                // Varied border styles and colors
+                const hue = Math.floor(Math.random() * 60); // Slight color variations in white/blue range
+                orbit.style.borderColor = `hsla(${hue}, 70%, 85%, ${opacity})`;
                 
-                bgContainer.appendChild(element);
-            }
+                // Alternate animation direction
+                if (index % 2 === 0) {
+                    orbit.style.animationDirection = 'reverse';
+                }
+                
+                // Set different positions for the glowing dots
+                const dotPos = Math.random() * 360;
+                const dotRadius = Math.max(size * widthScale, size * heightScale) / 2;
+                const dotX = Math.cos(dotPos * Math.PI / 180) * dotRadius;
+                const dotY = Math.sin(dotPos * Math.PI / 180) * dotRadius;
+                
+                // Varied dot sizes and effects
+                const dotSize = 5 + Math.random() * 8;
+                const dotOpacity = 0.6 + Math.random() * 0.4;
+                const dotGlow = 5 + Math.random() * 15;
+                
+                // Create specific CSS for the dot
+                const style = document.createElement('style');
+                style.textContent = `
+                    #${sectionId} .orbit-container .orbit:nth-child(${index + 1})::before,
+                    .${sectionId} .orbit-container .orbit:nth-child(${index + 1})::before {
+                        top: 50%;
+                        left: 50%;
+                        margin-top: ${dotY}px;
+                        margin-left: ${dotX}px;
+                        width: ${dotSize}px;
+                        height: ${dotSize}px;
+                        opacity: ${dotOpacity};
+                        box-shadow: 0 0 ${dotGlow}px rgba(255, 255, 255, ${dotOpacity});
+                        animation-delay: ${Math.random() * 4}s;
+                        animation-duration: ${2 + Math.random() * 4}s;
+                    }
+                `;
+                document.head.appendChild(style);
+            });
         });
     </script>
 </body>

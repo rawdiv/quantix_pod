@@ -51,6 +51,40 @@
             text-decoration: none;
         }
 
+        .credit-display {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            position: relative;
+        }
+
+        .credit-amount {
+            font-weight: 700;
+            margin-right: 0.5rem;
+            color: #fff;
+        }
+
+        .credit-tooltip {
+            position: absolute;
+            bottom: -30px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #aaa;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .credit-display:hover .credit-tooltip {
+            opacity: 1;
+        }
+
         /* Main Content */
         .main {
             padding-top: 100px;
@@ -332,6 +366,43 @@
         .preview-text {
             color: #aaa;
         }
+
+        .credit-usage {
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .credit-usage-label {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .credit-usage-value {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .credit-usage-time {
+            color: #aaa;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+
+        .credit-warning {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            color: #ff5555;
+        }
+
+        .credit-warning.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -340,6 +411,10 @@
         <div class="container">
             <div class="header-content">
                 <a href="/" class="logo">QuantPod</a>
+                <div class="credit-display">
+                    <span class="credit-amount">50</span> credits remaining
+                    <span class="credit-tooltip">Free plan: 20 credits per minute of audio</span>
+                </div>
             </div>
         </div>
     </header>
@@ -358,6 +433,10 @@
                         You can use: "Host:", "Guest:", "Speaker 1:", "Speaker 2:", or any name followed by a colon.
                     </p>
                     <textarea id="podcast-text" class="text-input" placeholder="Host: Welcome to our podcast!&#10;Guest: Thanks for having me.&#10;Host: Let's talk about..."></textarea>
+                    <div class="credit-usage">
+                        <div class="credit-usage-label">Estimated credit usage:</div>
+                        <div class="credit-usage-value">0 credits <span class="credit-usage-time">(0:00 minutes)</span></div>
+                    </div>
                 </div>
 
                 <!-- Voice Selection -->
@@ -409,6 +488,7 @@
 
                 <!-- Generate Button -->
                 <button id="generate-button" class="generate-button">Generate Podcast</button>
+                <div id="credit-warning" class="credit-warning">Not enough credits available. <a href="#pricing">Upgrade your plan</a> for more credits.</div>
                 <div id="loading" class="loading">Generating your podcast... This may take a few moments.</div>
 
                 <!-- Preview Section (Added) -->
@@ -555,6 +635,7 @@
             const text = podcastText.value.trim();
             if (!text) {
                 document.getElementById('preview-section').classList.remove('active');
+                updateCreditUsage(0, 0);
                 return;
             }
             
@@ -581,6 +662,14 @@
                 previewContent.appendChild(previewSegment);
             });
             
+            // Calculate estimated minutes and credit usage
+            const totalChars = segments.reduce((sum, segment) => sum + segment.text.length, 0);
+            const estimatedMinutes = Math.max(0.5, totalChars / 900); // Approx 900 chars per minute
+            const creditsNeeded = Math.ceil(estimatedMinutes * 20); // 20 credits per minute
+            
+            // Update credit usage display
+            updateCreditUsage(creditsNeeded, estimatedMinutes);
+            
             // Show preview
             document.getElementById('preview-section').classList.add('active');
         }, 500));
@@ -593,6 +682,28 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(context, args), wait);
             };
+        }
+
+        // Update credit usage display
+        function updateCreditUsage(credits, minutes) {
+            const creditUsageValue = document.querySelector('.credit-usage-value');
+            const minutesFormatted = formatTime(minutes);
+            
+            creditUsageValue.innerHTML = `${credits} credits <span class="credit-usage-time">(${minutesFormatted} minutes)</span>`;
+            
+            // Highlight if not enough credits
+            if (credits > 50) {
+                creditUsageValue.style.color = '#ff5555';
+            } else {
+                creditUsageValue.style.color = '#fff';
+            }
+        }
+        
+        // Format time as MM:SS
+        function formatTime(minutes) {
+            const mins = Math.floor(minutes);
+            const secs = Math.round((minutes - mins) * 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
         // Generate Podcast
@@ -612,6 +723,20 @@
             if (segments.length === 0) {
                 alert('Please format your script with "Host:" and "Guest:" prefixes');
                 return;
+            }
+            
+            // Calculate credit usage
+            const totalChars = segments.reduce((sum, segment) => sum + segment.text.length, 0);
+            const estimatedMinutes = Math.max(0.5, totalChars / 900);
+            const creditsNeeded = Math.ceil(estimatedMinutes * 20);
+            
+            // Check if user has enough credits
+            const availableCredits = 50; // This would come from user's account in a real app
+            if (creditsNeeded > availableCredits) {
+                document.getElementById('credit-warning').classList.add('active');
+                return;
+            } else {
+                document.getElementById('credit-warning').classList.remove('active');
             }
 
             // Show loading state
